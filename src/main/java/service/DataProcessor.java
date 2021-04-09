@@ -34,20 +34,18 @@ public class DataProcessor {
     public static double findMedian(List<Entity> entities, String eventName) {
         Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
         List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<Integer, Long>>() {
-            @Override
-            public int compare(Map.Entry<Integer, Long> o1, Map.Entry<Integer, Long> o2) {
-                return o1.getValue().compareTo(o2.getValue());
-            }
-        });
+        Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         if (entries.size() % 2 == 0) {
             return (entries.get((entities.size() / 2)).getValue() + entries.get((entries.size() / 2) + 1).getValue())/ 2;
         }
         return entries.get(entries.size()/2).getValue();
     }
 
-    public static void findScope(List<Entity> entities, String eventName) {
-
+    public static long findScope(List<Entity> entities, String eventName) {
+        Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
+        List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
+        Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
+        return entries.get(entries.size() - 1).getValue() - entries.get(0).getValue();
     }
 
     private static List<Entity> filterData(List<Entity> entities, String eventName) {
