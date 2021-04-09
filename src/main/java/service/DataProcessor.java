@@ -45,8 +45,11 @@ public class DataProcessor {
         return entries.get(entries.size()/2).getValue();
     }
 
-    public static void findScope(List<Entity> entities, String eventName) {
-
+    public static long findScope(List<Entity> entities, String eventName) {
+        Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
+        List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
+        Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
+        return entries.get(entries.size() - 1).getValue() - entries.get(0).getValue();
     }
 
     private static List<Entity> filterData(List<Entity> entities, String eventName) {
