@@ -19,6 +19,7 @@ import java.util.List;
 public class FileReader {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d/MM/yy, HH:mm");
+    private static final ErrorHandler errorHandler = new ErrorHandler();
 
     public static List<Entity> extractEntitiesFromFile(String filepath) {
         List<Entity> entities = new ArrayList<>();
@@ -40,7 +41,7 @@ public class FileReader {
                 entities.add(entity);
             }
         } catch (IOException e) {
-            ErrorHandler.handleException("Error reading from file. Please ensure that file is accessible and readable.");
+            errorHandler.handleException("Error reading from file. Please ensure that file is accessible and readable.");
         }
         return entities;
     }

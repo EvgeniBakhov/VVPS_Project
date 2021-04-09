@@ -29,7 +29,11 @@ public class HomeController implements Initializable {
 
     public static final String ABOUT_ERROR_TEXT = "Cannot load about file. Please check that all files are downloaded correctly and restart the program.";
     public static final String ABOUT_TITLE = "About";
+    public static final String EVENT_NAME = "Wiki page updated";
+    public static final ErrorHandler errorHandler = new ErrorHandler();
+
     ObservableList statTypes = FXCollections.observableArrayList();
+    boolean runEnabled;
 
     @FXML
     private MenuBar menuBar;
@@ -69,27 +73,31 @@ public class HomeController implements Initializable {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            ErrorHandler.handleException(ABOUT_ERROR_TEXT);
+            errorHandler.handleException(ABOUT_ERROR_TEXT);
         }
     }
 
     @FXML
     void runAlgorithm(ActionEvent event) {
         barChart.getData().clear();
-        //delete this.
-        Map<String, Integer> test = new HashMap<>();
-        test.put("Login", 10000);
-        test.put("Update profile", 4000);
-        test.put("Add course", 1100);
-        test.put("Update Wiki page", 6340);
-        test.put("Upload photo", 1235);
-        test.put("Register", 234);
-        loadDataToChart(test, "Absolute frequency");
+//        try {
+//            StatisticsType choice = StatisticsType.valueOf(statTypeChoiceBox.getValue().toString());
+//            switch (choice) {
+//                case ABS_FREQUENCY: calculateAbsFrequency(); break;
+//                case RELATIVE_FREQUENCY: calculateRelativeFrequency(); break;
+//                case MEDIAN: calculateMedian(); break;
+//                case SCOPE: calculateScope(); break;
+//            }
+//        } catch (IllegalArgumentException e) {
+//            errorHandler.handleException("Please, choose what type of data you want to be displayed.");
+//        }
+        errorHandler.handleException("You clicked run");
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadData();
+        runButton.setDisable(false);
     }
 
     public void loadDataToChart(Map<String, Integer> data, String title) {
