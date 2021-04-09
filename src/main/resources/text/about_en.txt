@@ -1,0 +1,17 @@
+This app is developed as a project for Validation and Verification of Program Systems. This program
+reads xlsx file and displays several data about specified actions extracted from this file
+e.g absolute and relative frequency, cope or median. Also it provides us graphical information
+about all events containing in file that fives us knowledge of relations between occurrences
+of different events. This app uses original algorithms to compute all types of statistics.
+
+©Developed by Yevhen Bakhov, TU-Sofia, 4 course, FCST, CSE.2021.
+
+Това приложение е разработено за курсов проект по Валидация и Верификация на
+Програмни системи (ВВПС) Тази програма чете xlsx файл и показва няколко типа
+данни за определени събития извлечени от този файл, например: абсолютна и
+относителна честота, размах и медиана. Също така приложението предоставя
+графична информация относно всички събития, срещани във файла, което ни
+позволява да придобием представата относноотношение между статистиките
+за различни събития.
+
+©Разработено от Евген Бахов, студент ТУ-София, 4 курс, ФКСТ, КСИ 2021.
