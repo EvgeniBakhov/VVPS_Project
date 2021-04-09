@@ -107,23 +107,24 @@ public class HomeController implements Initializable {
         } else {
             errorHandler.handleException("Please, choose the file with system logs");
         }
-        errorHandler.handleException("You clicked run");
     }
 
-    private void calculateScope() {
-
+    private void calculateScope() throws NullDataException{
+        Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
     }
 
-    private void calculateMedian() {
-        
+    private void calculateMedian() throws NullDataException {
+        Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
     }
 
-    private void calculateRelativeFrequency() {
-
+    private void calculateRelativeFrequency() throws NullDataException{
+        Map<String, Double> data = DataProcessor.findRelativeFrequencyForUser(entities, EVENT_NAME);
+        loadDataWithDoubleToChart(data, "Relative frequency");
     }
 
     private void calculateAbsFrequency() throws NullDataException {
-        Map<Integer, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
+        Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
+        loadDataWithLongToChart(data, "Absolute frequency");
     }
 
     @Override
@@ -131,7 +132,20 @@ public class HomeController implements Initializable {
         loadData();
     }
 
-    public void loadDataToChart(Map<String, Long> data, String title) {
+    private void loadDataWithDoubleToChart(Map<String, Double> data, String title) {
+        barChart.getData().clear();
+        for(Map.Entry<String, Double> entry: data.entrySet()) {
+            XYChart.Series series = new XYChart.Series<>();
+            series.setName(entry.getKey());
+            XYChart.Data<String, Double> chartData = new XYChart.Data<>("", entry.getValue());
+            series.getData().add(chartData);
+            barChart.getData().add(series);
+        }
+        barChart.setTitle(title);
+    }
+
+    private void loadDataWithLongToChart(Map<String, Long> data, String title) {
+        barChart.getData().clear();
         for(Map.Entry<String, Long> entry: data.entrySet()) {
             XYChart.Series series = new XYChart.Series<>();
             series.setName(entry.getKey());

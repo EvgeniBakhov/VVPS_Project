@@ -10,25 +10,25 @@ import java.util.stream.Collectors;
 
 public class DataProcessor {
 
-    public static Map<Integer, Double> findRelativeFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException{
-        Map<Integer, Double> relativeFrequencies = new HashMap<>();
+    public static Map<String, Double> findRelativeFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException{
+        Map<String, Double> relativeFrequencies = new HashMap<>();
         int listSize = filterData(entities, eventName).size();
-        Map<Integer, Long> userMap = findAbsFrequencyForUser(entities, eventName);
-        for (Map.Entry<Integer, Long> entry: userMap.entrySet()) {
+        Map<String, Long> userMap = findAbsFrequencyForUser(entities, eventName);
+        for (Map.Entry<String, Long> entry: userMap.entrySet()) {
             relativeFrequencies.put(entry.getKey(), ((double)entry.getValue() / listSize) * 100);
         }
         return relativeFrequencies;
     }
 
-    public static Map<Integer, Long> findAbsFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException {
+    public static Map<String, Long> findAbsFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException {
         if(entities == null || eventName == null) {
             throw new NullDataException("Params are null");
         }
-        Map<Integer, Long> usersMap = new HashMap<>();
+        Map<String, Long> usersMap = new HashMap<>();
         List<Entity> filteredEntities = filterData(entities, eventName);
         for (Entity entity: filteredEntities) {
-            int userId = extractUserId(entity.getDescription());
-            if (userId != -1 && usersMap.putIfAbsent(userId, 1L) != null) {
+            String userId = extractUserId(entity.getDescription());
+            if (userId != null && usersMap.putIfAbsent(userId, 1L) != null) {
                 usersMap.put(userId, usersMap.get(userId)+1);
             }
         }
@@ -36,8 +36,8 @@ public class DataProcessor {
     }
 
     public static double findMedian(List<Entity> entities, String eventName) throws NullDataException{
-        Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
-        List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
+        Map<String, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
+        List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         if (entries.size() % 2 == 0) {
             return (entries.get((entities.size() / 2)).getValue() + entries.get((entries.size() / 2) + 1).getValue())/ 2;
@@ -45,9 +45,9 @@ public class DataProcessor {
         return entries.get(entries.size()/2).getValue();
     }
 
-    public static long findScope(List<Entity> entities, String eventName) {
-        Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
-        List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
+    public static long findScope(List<Entity> entities, String eventName) throws NullDataException {
+        Map<String, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
+        List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         return entries.get(entries.size() - 1).getValue() - entries.get(0).getValue();
     }
@@ -56,15 +56,14 @@ public class DataProcessor {
         return entities.stream().filter(e -> e.getEventName().equals(eventName)).collect(Collectors.toList());
     }
 
-    private static int extractUserId(String description) {
-        String regex = "\'\\d{4}\'";
+    private static String extractUserId(String description) {
+        String userId = null;
+        String regex = "(\\d{4})";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(description);
-        if (matcher.find()) {
-            System.out.println(matcher.group());
-        } else {
-            return -1;
+        if(matcher.find()) {
+            userId = matcher.group();
         }
-        return Integer.parseInt(matcher.group());
+        return userId;
     }
 }
