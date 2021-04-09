@@ -1,3 +1,4 @@
-target
-resource
-.idea
+/target
+/resource
+/.idea
+VVPSProject.iml
