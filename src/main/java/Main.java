@@ -3,15 +3,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Entity;
-import util.FileReader;
-
-import java.util.List;
 
 public class Main extends Application {
     public static void main(String[] args) {
-        List<Entity> entities = FileReader.extractEntitiesFromFile("resource/Logs_Course A_StudentsActivities.xlsx");
-        System.out.println(entities.get(8).getTime());
         launch(args);
     }
 

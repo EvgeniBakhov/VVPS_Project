@@ -10,6 +10,6 @@
    <children>
       <Button fx:id="okButton" layoutX="162.0" layoutY="113.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="25.0" prefWidth="71.0" text="OK" />
       <FontAwesomeIconView fill="#e11515" glyphName="EXCLAMATION_CIRCLE" layoutX="42.0" layoutY="84.0" size="40" wrappingWidth="33.0" />
-      <Label fx:id="errorMessage" layoutX="109.0" layoutY="61.0" prefHeight="17.0" prefWidth="258.0" text="Error occured!" />
+      <Label fx:id="errorMessage" layoutX="109.0" layoutY="40.0" prefHeight="51.0" prefWidth="258.0" text="Error occured!" />
    </children>
 </AnchorPane>

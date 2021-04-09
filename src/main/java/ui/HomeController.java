@@ -17,23 +17,29 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Entity;
+import util.FileReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
-    public static final String ABOUT_ERROR_TEXT = "Cannot load about file. Please check that all files are downloaded correctly and restart the program.";
-    public static final String ABOUT_TITLE = "About";
-    public static final String EVENT_NAME = "Wiki page updated";
-    public static final ErrorHandler errorHandler = new ErrorHandler();
+    private static final String ABOUT_ERROR_TEXT = "Cannot load about file. Please check that all files are downloaded correctly and restart the program.";
+    private static final String ABOUT_TITLE = "About";
+    private static final String EVENT_NAME = "Wiki page updated";
+    private static final ErrorHandler errorHandler = new ErrorHandler();
 
-    ObservableList statTypes = FXCollections.observableArrayList();
-    boolean runEnabled;
+    private ObservableList statTypes = FXCollections.observableArrayList();
+    private File logFile;
+    private List<Entity> entities;
 
     @FXML
     private MenuBar menuBar;
@@ -55,7 +61,9 @@ public class HomeController implements Initializable {
 
     @FXML
     void chooseFile(ActionEvent event) {
-
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open xslx log file");
+        logFile = fileChooser.showOpenDialog(null);
     }
 
     @FXML
@@ -80,6 +88,11 @@ public class HomeController implements Initializable {
     @FXML
     void runAlgorithm(ActionEvent event) {
         barChart.getData().clear();
+        if(logFile != null) {
+            entities = FileReader.extractEntitiesFromFile(logFile);
+        } else {
+            errorHandler.handleException("Please, choose the file with system logs");
+        }
 //        try {
 //            StatisticsType choice = StatisticsType.valueOf(statTypeChoiceBox.getValue().toString());
 //            switch (choice) {
