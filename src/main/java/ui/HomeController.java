@@ -1,6 +1,7 @@
 package ui;
 
 import enums.StatisticsType;
+import exception.NullDataException;
 import handlers.ErrorHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,12 +21,12 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Entity;
+import service.DataProcessor;
 import util.FileReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -90,34 +91,51 @@ public class HomeController implements Initializable {
         barChart.getData().clear();
         if(logFile != null) {
             entities = FileReader.extractEntitiesFromFile(logFile);
+            try {
+                StatisticsType choice = StatisticsType.valueOf(statTypeChoiceBox.getValue().toString());
+                switch (choice) {
+                    case ABS_FREQUENCY: calculateAbsFrequency(); break;
+                    case RELATIVE_FREQUENCY: calculateRelativeFrequency(); break;
+                    case MEDIAN: calculateMedian(); break;
+                    case SCOPE: calculateScope(); break;
+                }
+            } catch (IllegalArgumentException e) {
+                errorHandler.handleException("Please, choose what type of data you want to be displayed.");
+            } catch (NullDataException exception) {
+                errorHandler.handleException(exception.getMessage());
+            }
         } else {
             errorHandler.handleException("Please, choose the file with system logs");
         }
-//        try {
-//            StatisticsType choice = StatisticsType.valueOf(statTypeChoiceBox.getValue().toString());
-//            switch (choice) {
-//                case ABS_FREQUENCY: calculateAbsFrequency(); break;
-//                case RELATIVE_FREQUENCY: calculateRelativeFrequency(); break;
-//                case MEDIAN: calculateMedian(); break;
-//                case SCOPE: calculateScope(); break;
-//            }
-//        } catch (IllegalArgumentException e) {
-//            errorHandler.handleException("Please, choose what type of data you want to be displayed.");
-//        }
         errorHandler.handleException("You clicked run");
+    }
+
+    private void calculateScope() {
+
+    }
+
+    private void calculateMedian() {
+        
+    }
+
+    private void calculateRelativeFrequency() {
+
+    }
+
+    private void calculateAbsFrequency() throws NullDataException {
+        Map<Integer, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadData();
-        runButton.setDisable(false);
     }
 
-    public void loadDataToChart(Map<String, Integer> data, String title) {
-        for(Map.Entry<String, Integer> entry: data.entrySet()) {
+    public void loadDataToChart(Map<String, Long> data, String title) {
+        for(Map.Entry<String, Long> entry: data.entrySet()) {
             XYChart.Series series = new XYChart.Series<>();
             series.setName(entry.getKey());
-            XYChart.Data<String, Integer> chartData = new XYChart.Data<>("", entry.getValue());
+            XYChart.Data<String, Long> chartData = new XYChart.Data<>("", entry.getValue());
             series.getData().add(chartData);
             barChart.getData().add(series);
         }
