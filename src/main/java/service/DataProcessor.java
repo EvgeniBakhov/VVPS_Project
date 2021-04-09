@@ -1,5 +1,6 @@
 package service;
 
+import exception.NullDataException;
 import model.Entity;
 
 import java.util.*;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class DataProcessor {
 
-    public static Map<Integer, Double> findRelativeFrequencyForUser(List<Entity> entities, String eventName) {
+    public static Map<Integer, Double> findRelativeFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException{
         Map<Integer, Double> relativeFrequencies = new HashMap<>();
         int listSize = filterData(entities, eventName).size();
         Map<Integer, Long> userMap = findAbsFrequencyForUser(entities, eventName);
@@ -19,19 +20,22 @@ public class DataProcessor {
         return relativeFrequencies;
     }
 
-    public static Map<Integer, Long> findAbsFrequencyForUser(List<Entity> entities, String eventName) {
+    public static Map<Integer, Long> findAbsFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException {
+        if(entities == null || eventName == null) {
+            throw new NullDataException("Params are null");
+        }
         Map<Integer, Long> usersMap = new HashMap<>();
         List<Entity> filteredEntities = filterData(entities, eventName);
         for (Entity entity: filteredEntities) {
             int userId = extractUserId(entity.getDescription());
-            if (usersMap.putIfAbsent(userId, 1L) != null) {
+            if (userId != -1 && usersMap.putIfAbsent(userId, 1L) != null) {
                 usersMap.put(userId, usersMap.get(userId)+1);
             }
         }
         return usersMap;
     }
 
-    public static double findMedian(List<Entity> entities, String eventName) {
+    public static double findMedian(List<Entity> entities, String eventName) throws NullDataException{
         Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
         List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));

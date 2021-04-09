@@ -1,6 +1,7 @@
 package ui;
 
 import enums.StatisticsType;
+import exception.NullDataException;
 import handlers.ErrorHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -17,19 +18,29 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Entity;
+import service.DataProcessor;
+import util.FileReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
-    public static final String ABOUT_ERROR_TEXT = "Cannot load about file. Please check that all files are downloaded correctly and restart the program.";
-    public static final String ABOUT_TITLE = "About";
-    ObservableList statTypes = FXCollections.observableArrayList();
+    private static final String ABOUT_ERROR_TEXT = "Cannot load about file. Please check that all files are downloaded correctly and restart the program.";
+    private static final String ABOUT_TITLE = "About";
+    private static final String EVENT_NAME = "Wiki page updated";
+    private static final ErrorHandler errorHandler = new ErrorHandler();
+
+    private ObservableList statTypes = FXCollections.observableArrayList();
+    private File logFile;
+    private List<Entity> entities;
 
     @FXML
     private MenuBar menuBar;
@@ -51,7 +62,9 @@ public class HomeController implements Initializable {
 
     @FXML
     void chooseFile(ActionEvent event) {
-
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open xslx log file");
+        logFile = fileChooser.showOpenDialog(null);
     }
 
     @FXML
@@ -69,22 +82,48 @@ public class HomeController implements Initializable {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            ErrorHandler.handleException(ABOUT_ERROR_TEXT);
+            errorHandler.handleException(ABOUT_ERROR_TEXT);
         }
     }
 
     @FXML
     void runAlgorithm(ActionEvent event) {
         barChart.getData().clear();
-        //delete this.
-        Map<String, Integer> test = new HashMap<>();
-        test.put("Login", 10000);
-        test.put("Update profile", 4000);
-        test.put("Add course", 1100);
-        test.put("Update Wiki page", 6340);
-        test.put("Upload photo", 1235);
-        test.put("Register", 234);
-        loadDataToChart(test, "Absolute frequency");
+        if(logFile != null) {
+            entities = FileReader.extractEntitiesFromFile(logFile);
+            try {
+                StatisticsType choice = StatisticsType.valueOf(statTypeChoiceBox.getValue().toString());
+                switch (choice) {
+                    case ABS_FREQUENCY: calculateAbsFrequency(); break;
+                    case RELATIVE_FREQUENCY: calculateRelativeFrequency(); break;
+                    case MEDIAN: calculateMedian(); break;
+                    case SCOPE: calculateScope(); break;
+                }
+            } catch (IllegalArgumentException e) {
+                errorHandler.handleException("Please, choose what type of data you want to be displayed.");
+            } catch (NullDataException exception) {
+                errorHandler.handleException(exception.getMessage());
+            }
+        } else {
+            errorHandler.handleException("Please, choose the file with system logs");
+        }
+        errorHandler.handleException("You clicked run");
+    }
+
+    private void calculateScope() {
+
+    }
+
+    private void calculateMedian() {
+        
+    }
+
+    private void calculateRelativeFrequency() {
+
+    }
+
+    private void calculateAbsFrequency() throws NullDataException {
+        Map<Integer, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
     }
 
     @Override
@@ -92,11 +131,11 @@ public class HomeController implements Initializable {
         loadData();
     }
 
-    public void loadDataToChart(Map<String, Integer> data, String title) {
-        for(Map.Entry<String, Integer> entry: data.entrySet()) {
+    public void loadDataToChart(Map<String, Long> data, String title) {
+        for(Map.Entry<String, Long> entry: data.entrySet()) {
             XYChart.Series series = new XYChart.Series<>();
             series.setName(entry.getKey());
-            XYChart.Data<String, Integer> chartData = new XYChart.Data<>("", entry.getValue());
+            XYChart.Data<String, Long> chartData = new XYChart.Data<>("", entry.getValue());
             series.getData().add(chartData);
             barChart.getData().add(series);
         }

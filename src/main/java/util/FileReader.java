@@ -19,10 +19,10 @@ import java.util.List;
 public class FileReader {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d/MM/yy, HH:mm");
+    private static final ErrorHandler errorHandler = new ErrorHandler();
 
-    public static List<Entity> extractEntitiesFromFile(String filepath) {
+    public static List<Entity> extractEntitiesFromFile(File excelFile) {
         List<Entity> entities = new ArrayList<>();
-        File excelFile = new File(filepath);
         try(FileInputStream fis = new FileInputStream(excelFile)) {
             XSSFWorkbook workbook = new XSSFWorkbook(fis);
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -39,8 +39,9 @@ public class FileReader {
                 entity.setDescription(row.getCell(4).getStringCellValue());
                 entities.add(entity);
             }
-        } catch (IOException e) {
-            ErrorHandler.handleException("Error reading from file. Please ensure that file is accessible and readable.");
+        } catch (Exception e) {
+            errorHandler.handleException("Error reading from file. Please ensure that file \n" +
+                    "is in correct format.");
         }
         return entities;
     }
