@@ -2,9 +2,7 @@ package service;
 
 import model.Entity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,8 +31,19 @@ public class DataProcessor {
         return usersMap;
     }
 
-    public static void findMedian(List<Entity> entities, String eventName) {
-
+    public static double findMedian(List<Entity> entities, String eventName) {
+        Map<Integer, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
+        List<Map.Entry<Integer, Long>> entries = new LinkedList<>(usersMap.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<Integer, Long>>() {
+            @Override
+            public int compare(Map.Entry<Integer, Long> o1, Map.Entry<Integer, Long> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        });
+        if (entries.size() % 2 == 0) {
+            return (entries.get((entities.size() / 2)).getValue() + entries.get((entries.size() / 2) + 1).getValue())/ 2;
+        }
+        return entries.get(entries.size()/2).getValue();
     }
 
     public static void findScope(List<Entity> entities, String eventName) {
