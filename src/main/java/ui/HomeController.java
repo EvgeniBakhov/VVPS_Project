@@ -14,10 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Entity;
@@ -27,6 +25,7 @@ import util.FileReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -59,6 +58,9 @@ public class HomeController implements Initializable {
 
     @FXML
     private BarChart<?, ?> barChart;
+
+    @FXML
+    private ListView<String> resultList;
 
     @FXML
     void chooseFile(ActionEvent event) {
@@ -125,6 +127,14 @@ public class HomeController implements Initializable {
     private void calculateAbsFrequency() throws NullDataException {
         Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
         loadDataWithLongToChart(data, "Absolute frequency");
+        ObservableList<String> listData = FXCollections.observableList(getTextData(data));
+        loadTextData(listData);
+    }
+
+    private List<String> getTextData(Map<String, Long> data) {
+        List<String> list = new ArrayList<>();
+        data.entrySet().forEach(e -> list.add(e.getKey() + ": " + e.getValue() + ";\n"));
+        return list;
     }
 
     @Override
@@ -154,6 +164,10 @@ public class HomeController implements Initializable {
             barChart.getData().add(series);
         }
         barChart.setTitle(title);
+    }
+
+    private void loadTextData(ObservableList<String> result) {
+        resultList.setItems(result);
     }
 
     private void loadData() {
