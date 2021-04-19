@@ -37,17 +37,6 @@ public class HomeController implements Initializable {
     private File logFile;
     private List<Entity> entities;
 
-    @FXML
-    private MenuBar menuBar;
-
-    @FXML
-    private MenuItem exitMenuItem;
-
-    @FXML
-    private Button chooseFileButton;
-
-    @FXML
-    private Button runButton;
 
     @FXML
     private ChoiceBox<?> statTypeChoiceBox;
