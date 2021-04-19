@@ -40,7 +40,7 @@ public class DataProcessor {
         List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         if (entries.size() % 2 == 0) {
-            return (entries.get((entities.size() / 2)).getValue() + entries.get((entries.size() / 2) + 1).getValue())/ 2;
+            return (entries.get((usersMap.size() / 2)).getValue() + entries.get((usersMap.size() / 2) + 1).getValue())/ 2;
         }
         return entries.get(entries.size()/2).getValue();
     }
@@ -50,6 +50,15 @@ public class DataProcessor {
         List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         return entries.get(entries.size() - 1).getValue() - entries.get(0).getValue();
+    }
+
+    public static Map<String, Long> findMinMax(Map<String, Long> unsortedData) {
+        List<Map.Entry<String, Long>> entries = new LinkedList<>(unsortedData.entrySet());
+        Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
+        Map<String, Long> minMaxMap = new HashMap<>();
+        minMaxMap.put("Minimum", entries.get(0).getValue());
+        minMaxMap.put("Maximum", entries.get(entries.size() - 1).getValue());
+        return minMaxMap;
     }
 
     private static List<Entity> filterData(List<Entity> entities, String eventName) {

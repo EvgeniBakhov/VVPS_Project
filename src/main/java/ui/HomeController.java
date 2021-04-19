@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Entity;
@@ -25,10 +24,7 @@ import util.FileReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
 
@@ -98,13 +94,11 @@ public class HomeController implements Initializable {
                 switch (choice) {
                     case ABS_FREQUENCY: calculateAbsFrequency(); break;
                     case RELATIVE_FREQUENCY: calculateRelativeFrequency(); break;
-                    case MEDIAN: calculateMedian(); break;
                     case SCOPE: calculateScope(); break;
+                    case MEDIAN: calculateMedian(); break;
                 }
-            } catch (IllegalArgumentException e) {
-                errorHandler.handleException("Please, choose what type of data you want to be displayed.");
-            } catch (NullDataException exception) {
-                errorHandler.handleException(exception.getMessage());
+            } catch (Exception e) {
+                errorHandler.handleException("Please, choose what type of data you want \nto be displayed.");
             }
         } else {
             errorHandler.handleException("Please, choose the file with system logs");
@@ -113,27 +107,57 @@ public class HomeController implements Initializable {
 
     private void calculateScope() throws NullDataException{
         Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
+        Map<String, Long> minMaxValues = DataProcessor.findMinMax(data);
+        loadDataWithLongToChart(minMaxValues, "Minimum and maximum");
+        long scope = DataProcessor.findScope(entities, EVENT_NAME);
+        ObservableList<String> listData = FXCollections.observableArrayList(getScopeTextData(scope));
+        loadTextData(listData);
+    }
+
+    private List<String> getScopeTextData(long scope) {
+        List<String> data = new ArrayList<>();
+        data.add("Scope = " + scope);
+        return data;
     }
 
     private void calculateMedian() throws NullDataException {
-        Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
+        double median = DataProcessor.findMedian(entities, EVENT_NAME);
+        Map<String, Double> chartData = new HashMap<>();
+        chartData.put("Median", median);
+        loadDataWithDoubleToChart(chartData, "Median");
+        ObservableList<String> listData = FXCollections.observableArrayList(getMedianTextData(median));
+        loadTextData(listData);
+    }
+
+    private List<String> getMedianTextData(double median) {
+        List<String> data = new ArrayList<>();
+        data.add("Median = " + median);
+        return data;
     }
 
     private void calculateRelativeFrequency() throws NullDataException{
         Map<String, Double> data = DataProcessor.findRelativeFrequencyForUser(entities, EVENT_NAME);
         loadDataWithDoubleToChart(data, "Relative frequency");
+        ObservableList<String> listData = FXCollections.observableList(getRelativeFrequencyTextData(data));
+        loadTextData(listData);
     }
 
     private void calculateAbsFrequency() throws NullDataException {
         Map<String, Long> data = DataProcessor.findAbsFrequencyForUser(entities, EVENT_NAME);
         loadDataWithLongToChart(data, "Absolute frequency");
-        ObservableList<String> listData = FXCollections.observableList(getTextData(data));
+        ObservableList<String> listData = FXCollections.observableList(getAbsoluteFrequencyTextData(data));
         loadTextData(listData);
     }
 
-    private List<String> getTextData(Map<String, Long> data) {
+    private List<String> getAbsoluteFrequencyTextData(Map<String, Long> data) {
         List<String> list = new ArrayList<>();
-        data.entrySet().forEach(e -> list.add(e.getKey() + ": " + e.getValue() + ";\n"));
+        data.entrySet().forEach(e -> list.add("id " + e.getKey() + ": " + e.getValue() + ";\n"));
+        return list;
+    }
+
+    private List<String> getRelativeFrequencyTextData(Map<String, Double> data) {
+        List<String> list = new ArrayList<>();
+        data.entrySet().forEach(e -> list.add("id " + e.getKey() + ": " + e.getValue() + "%;\n"));
         return list;
     }
 
@@ -175,7 +199,7 @@ public class HomeController implements Initializable {
                 StatisticsType.ABS_FREQUENCY.toString(),
                 StatisticsType.RELATIVE_FREQUENCY.toString(),
                 StatisticsType.MEDIAN.toString(),
-                StatisticsType.SCOPE);
+                StatisticsType.SCOPE.toString());
         statTypeChoiceBox.setItems(statTypes);
     }
 }
