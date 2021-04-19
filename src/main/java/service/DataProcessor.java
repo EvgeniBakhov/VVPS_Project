@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 public class DataProcessor {
 
     public static Map<String, Double> findRelativeFrequencyForUser(List<Entity> entities, String eventName) throws NullDataException{
+        if (entities == null || eventName == null) {
+            throw new NullDataException("Params are null");
+        }
         Map<String, Double> relativeFrequencies = new HashMap<>();
         int listSize = filterData(entities, eventName).size();
         Map<String, Long> userMap = findAbsFrequencyForUser(entities, eventName);
@@ -36,6 +39,9 @@ public class DataProcessor {
     }
 
     public static double findMedian(List<Entity> entities, String eventName) throws NullDataException{
+        if(entities == null || eventName == null) {
+            throw new NullDataException("Params are null");
+        }
         Map<String, Long> usersMap = findAbsFrequencyForUser(entities, eventName);
         List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
