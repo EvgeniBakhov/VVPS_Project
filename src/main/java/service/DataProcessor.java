@@ -46,7 +46,7 @@ public class DataProcessor {
         List<Map.Entry<String, Long>> entries = new LinkedList<>(usersMap.entrySet());
         Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
         if (entries.size() % 2 == 0) {
-            return (entries.get((usersMap.size() / 2)).getValue() + entries.get((usersMap.size() / 2) + 1).getValue())/ 2;
+            return (entries.get((usersMap.size() / 2)).getValue() + entries.get((usersMap.size() / 2) - 1).getValue())/ 2;
         }
         return entries.get(entries.size()/2).getValue();
     }

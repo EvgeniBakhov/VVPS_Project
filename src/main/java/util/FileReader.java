@@ -2,7 +2,6 @@ package util;
 
 import handlers.ErrorHandler;
 import model.Entity;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -30,7 +29,6 @@ public class FileReader {
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Entity entity = new Entity();
-                Iterator<Cell> cellIterator = row.cellIterator();
                 entity.setTime(LocalDateTime.parse(row.getCell(0).getStringCellValue(), DATE_TIME_FORMATTER));
                 entity.setEventContext(row.getCell(1).getStringCellValue());
                 entity.setComponent(row.getCell(2).getStringCellValue());
