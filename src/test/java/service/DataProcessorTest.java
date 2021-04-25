@@ -23,14 +23,14 @@ class DataProcessorTest {
     }
 
     @Test
-    void findRelativeFrequencyForUserTestEntitiesParamIsNull() {
+    void findRelativeFrequencyForUserTestEntitiesParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findRelativeFrequencyForUser(null, "Name");
         });
     }
 
     @Test
-    void findRelativeFrequencyForUserTestEventNameParamIsNull() {
+    void findRelativeFrequencyForUserTestEventNameParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findRelativeFrequencyForUser(new ArrayList<>(), null);
         });
@@ -48,14 +48,32 @@ class DataProcessorTest {
     }
 
     @Test
-    void findAbsFrequencyForUserTestEntitiesParamIsNull() {
+    void findAbsFrequencyForUserTestEntitiesContainsEventForDifferentUsersThenShouldCalculateAbsFrequency() throws NullDataException {
+        List<Entity> entities = new ArrayList<>();
+        entities.add(TestBase.createDefaultEntity());
+        Entity entity = TestBase.createEntityWithFields(
+                "Wiki page updated",
+                "The user with id \'7913\' updated the page with id \'285\' for the wiki with course module id \'5131\'",
+                "Component",
+                "Context",
+                LocalDateTime.MIN);
+        entities.add(entity);
+        Map<String, Long> result = DataProcessor.findAbsFrequencyForUser(entities, "Wiki page updated");
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(1, result.get("7912"));
+        Assertions.assertEquals(1, result.get("7913"));
+    }
+
+    @Test
+    void findAbsFrequencyForUserTestEntitiesParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findAbsFrequencyForUser(null, "Name");
         });
     }
 
     @Test
-    void findAbsFrequencyForUserTestEventNameParamIsNull() {
+    void findAbsFrequencyForUserTestEventNameParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findAbsFrequencyForUser(new ArrayList<>(), null);
         });
@@ -79,14 +97,14 @@ class DataProcessorTest {
     }
 
     @Test
-    void findMedianForUserTestEntitiesParamIsNull() {
+    void findMedianForUserTestEntitiesParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findMedian(null, "Name");
         });
     }
 
     @Test
-    void findMedianForUserTestEventNameParamIsNull() {
+    void findMedianForUserTestEventNameParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findMedian(new ArrayList<>(), null);
         });
@@ -99,14 +117,14 @@ class DataProcessorTest {
     }
 
     @Test
-    void findScopeForUserTestEntitiesParamIsNull() {
+    void findScopeForUserTestEntitiesParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findScope(null, "Name");
         });
     }
 
     @Test
-    void findScopeForUserTestEventNameParamIsNull() {
+    void findScopeForUserTestEventNameParamIsNullThenExceptionIsThrown() {
         Assertions.assertThrows(NullDataException.class, () -> {
             DataProcessor.findScope(new ArrayList<>(), null);
         });
