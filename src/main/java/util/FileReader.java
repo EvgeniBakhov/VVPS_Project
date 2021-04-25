@@ -19,6 +19,12 @@ public class FileReader {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d/MM/yy, HH:mm");
     private static final ErrorHandler errorHandler = new ErrorHandler();
 
+    /**
+     * Extracts list of {@link Entity} from excel file.
+     *
+     * @param excelFile excel file to extract entities from.
+     * @return list of {@link Entity} extracted from file.
+     */
     public static List<Entity> extractEntitiesFromFile(File excelFile) {
         List<Entity> entities = new ArrayList<>();
         try(FileInputStream fis = new FileInputStream(excelFile)) {

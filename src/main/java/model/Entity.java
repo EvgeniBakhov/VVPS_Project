@@ -2,6 +2,9 @@ package model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents event extracted from file.
+ */
 public class Entity {
 
     private LocalDateTime time;

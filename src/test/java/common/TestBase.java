@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 
 public class TestBase {
 
+    /**
+     * Creates a default {@link Entity} for testing purposes.
+     *
+     * @return {@link Entity} with default values.
+     */
     public static Entity createDefaultEntity() {
         Entity entity = new Entity();
         entity.setEventName("Wiki page updated");
@@ -16,6 +21,16 @@ public class TestBase {
         return entity;
     }
 
+    /**
+     * Allows to create an {@link Entity} with custom fields.
+     *
+     * @param name name of event.
+     * @param description description of event.
+     * @param component component for event.
+     * @param context context of event.
+     * @param time time of event occurrence.
+     * @return {@link Entity} with custom-set fields.
+     */
     public static Entity createEntityWithFields(String name,
                                                 String description,
                                                 String component,
